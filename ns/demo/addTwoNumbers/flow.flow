@@ -1,0 +1,53 @@
+interface demo
+service addTwoNumbers (
+    input {
+        String num1;
+        String num2;
+    }
+    output {
+        String sum;
+    }
+)
+properties {
+    visible: private;
+    reuse: private;
+    stateless: true;
+    cacheResults: false;
+    cacheExpire: 15;
+    prefetch: false;
+    prefetchActivation: 1;
+    allowedHttpMethods: [TRACE, HEAD, DELETE, POST, GET, OPTIONS, PUT, PATCH];
+    maxRetryAttempts: 0;
+    retryInterval: 0;
+    enableAuditing: never;
+    logOn: Error only;
+    includePipeline: never;
+    validateInput: false;
+    validateOutput: false;
+}
+{
+    INVOKE pub.math:addFloats {
+        validateInput: false
+        validateOutput: false
+        input {
+            mapSource {
+                String num1;
+                String num2;
+            }
+            copy num1 -> num1;
+            copy num2 -> num2;
+        }
+        output {
+            mapSource {
+                String value;
+            }
+            mapTarget {
+                String sum;
+            }
+            copy value -> sum;
+        }
+    }
+    MAP {
+        drop `value`;
+    }
+}
